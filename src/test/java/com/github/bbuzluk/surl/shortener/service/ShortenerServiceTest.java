@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.github.bbuzluk.surl.auth.service.UserContextService;
-import com.github.bbuzluk.surl.shortener.data.repository.ShortUrlRepository;
-import com.github.bbuzluk.surl.shortener.exception.FailedUniqueShortCodeException;
+import com.github.bbuzluk.surl.exception.FailedUniqueShortCodeException;
+import com.github.bbuzluk.surl.repository.ShortUrlRepository;
+import com.github.bbuzluk.surl.service.ShortCodeGenerator;
+import com.github.bbuzluk.surl.service.ShortenerService;
+import com.github.bbuzluk.surl.service.UserContextService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

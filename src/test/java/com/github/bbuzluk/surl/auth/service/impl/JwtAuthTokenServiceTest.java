@@ -2,7 +2,8 @@ package com.github.bbuzluk.surl.auth.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.github.bbuzluk.surl.auth.data.model.AuthToken;
+import com.github.bbuzluk.surl.data.model.AuthToken;
+import com.github.bbuzluk.surl.service.impl.JwtAuthTokenService;
 import java.time.Instant;
 import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;

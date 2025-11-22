@@ -5,7 +5,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.authentication.UsernamePasswordAuthenticationToken.authenticated;
 
-import com.github.bbuzluk.surl.auth.data.model.AuthToken;
+import com.github.bbuzluk.surl.data.model.AuthToken;
+import com.github.bbuzluk.surl.service.AuthService;
+import com.github.bbuzluk.surl.service.AuthTokenService;
 import java.time.Duration;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
