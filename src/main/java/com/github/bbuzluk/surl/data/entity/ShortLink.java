@@ -12,9 +12,8 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(indexes = {@Index(name = "idx_short_code", columnList = "shortCode", unique = true)})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ShortUrl {
+public class ShortLink {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -28,12 +27,12 @@ public class ShortUrl {
   @Column(nullable = false, unique = true)
   private String shortCode;
 
-  public static ShortUrl create(
+  public static ShortLink create(
       @Nonnull String username, @Nonnull String originalUrl, @Nonnull String shortCode) {
-    ShortUrl shortUrl = new ShortUrl();
-    shortUrl.setUsername(requireNonNull(username));
-    shortUrl.setOriginalUrl(requireNonNull(originalUrl));
-    shortUrl.setShortCode(requireNonNull(shortCode));
-    return shortUrl;
+    ShortLink shortLink = new ShortLink();
+    shortLink.setUsername(requireNonNull(username));
+    shortLink.setOriginalUrl(requireNonNull(originalUrl));
+    shortLink.setShortCode(requireNonNull(shortCode));
+    return shortLink;
   }
 }
