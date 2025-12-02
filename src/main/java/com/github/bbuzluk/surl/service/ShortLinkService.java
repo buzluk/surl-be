@@ -1,9 +1,9 @@
 package com.github.bbuzluk.surl.service;
 
 import com.github.bbuzluk.surl.data.entity.ShortLink;
+import com.github.bbuzluk.surl.data.model.SurlConfig;
 import com.github.bbuzluk.surl.exception.FailedUniqueShortCodeException;
 import com.github.bbuzluk.surl.repository.ShortLinkRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -12,17 +12,17 @@ public class ShortLinkService {
   private final ShortCodeGenerator shortCodeGenerator;
   private final ShortLinkRepository shortLinkRepository;
   private final UserContextService userContextService;
-  private final int maxAttempts;
+  private final SurlConfig surlConfig;
 
   public ShortLinkService(
       ShortCodeGenerator shortCodeGenerator,
       ShortLinkRepository shortLinkRepository,
       UserContextService userContextService,
-      @Value("${shorturl.max-attempts:5}") int maxAttempts) {
+      SurlConfig surlConfig) {
     this.shortCodeGenerator = shortCodeGenerator;
     this.shortLinkRepository = shortLinkRepository;
     this.userContextService = userContextService;
-    this.maxAttempts = maxAttempts;
+    this.surlConfig = surlConfig;
   }
 
   public String createShortCode(String originalUrl) {
@@ -33,7 +33,7 @@ public class ShortLinkService {
   }
 
   private void saveWithRetry(ShortLink shortLink) {
-    for (int i = 0; i < maxAttempts; i++) {
+    for (int i = 0; i < surlConfig.maxShortCodeGenerationAttempts(); i++) {
       try {
         shortLinkRepository.save(shortLink);
         return;

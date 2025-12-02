@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.github.bbuzluk.surl.data.model.SurlConfig;
 import com.github.bbuzluk.surl.exception.FailedUniqueShortCodeException;
 import com.github.bbuzluk.surl.repository.ShortLinkRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,8 +25,10 @@ class ShortLinkServiceTest {
 
   @BeforeEach
   void setUp() {
-    this.shortLinkService =
-        new ShortLinkService(shortCodeGenerator, shortLinkRepository, userContextService, 5);
+    SurlConfig surlConfig = new SurlConfig("test.ly", 5);
+    shortLinkService =
+        new ShortLinkService(
+            shortCodeGenerator, shortLinkRepository, userContextService, surlConfig);
   }
 
   @Test
