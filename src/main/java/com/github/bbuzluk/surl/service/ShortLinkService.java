@@ -4,26 +4,17 @@ import com.github.bbuzluk.surl.data.entity.ShortLink;
 import com.github.bbuzluk.surl.data.model.SurlConfig;
 import com.github.bbuzluk.surl.exception.FailedUniqueShortCodeException;
 import com.github.bbuzluk.surl.repository.ShortLinkRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ShortLinkService {
   private final ShortCodeGenerator shortCodeGenerator;
   private final ShortLinkRepository shortLinkRepository;
   private final UserContextService userContextService;
   private final SurlConfig surlConfig;
-
-  public ShortLinkService(
-      ShortCodeGenerator shortCodeGenerator,
-      ShortLinkRepository shortLinkRepository,
-      UserContextService userContextService,
-      SurlConfig surlConfig) {
-    this.shortCodeGenerator = shortCodeGenerator;
-    this.shortLinkRepository = shortLinkRepository;
-    this.userContextService = userContextService;
-    this.surlConfig = surlConfig;
-  }
 
   public String createShortCode(String originalUrl) {
     String username = userContextService.getCurrentUsername();
