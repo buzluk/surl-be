@@ -18,20 +18,27 @@ public class ShortLinkService {
 
   public String createShortCode(String originalUrl) {
     String username = userContextService.getCurrentUsername();
-    ShortLink shortLink = ShortLink.create(originalUrl, username, shortCodeGenerator.generate());
+    String shortCode = shortCodeGenerator.generate();
+    ShortLink shortLink = ShortLink.create(originalUrl, username, shortCode);
     saveWithRetry(shortLink);
     return shortLink.getShortCode();
   }
 
   private void saveWithRetry(ShortLink shortLink) {
     for (int i = 0; i < surlConfig.maxShortCodeGenerationAttempts(); i++) {
-      try {
-        shortLinkRepository.save(shortLink);
-        return;
-      } catch (DataIntegrityViolationException e) {
-        shortLink.setShortCode(shortCodeGenerator.generate());
-      }
+      if (tryToSaveShortLink(shortLink)) return;
     }
     throw new FailedUniqueShortCodeException();
+  }
+
+  private boolean tryToSaveShortLink(ShortLink shortLink) {
+    try {
+      shortLinkRepository.save(shortLink);
+      return true;
+    } catch (DataIntegrityViolationException e) {
+      String newShortCode = shortCodeGenerator.generate();
+      shortLink.setShortCode(newShortCode);
+      return false;
+    }
   }
 }
