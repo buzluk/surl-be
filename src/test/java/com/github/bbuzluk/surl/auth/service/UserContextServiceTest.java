@@ -35,18 +35,18 @@ class UserContextServiceTest {
   }
 
   @Test
-  @DisplayName("getCurrentUsername returns 'anonymousUser' when SecurityContext is null")
+  @DisplayName("getCurrentUsername returns empty string when SecurityContext is null")
   void getCurrentUsername_when_securityContextIsNull() {
     try (var mockedStatic = mockStatic(SecurityContextHolder.class)) {
       mockedStatic.when(SecurityContextHolder::getContext).thenReturn(null);
 
       String username = userContextService.getCurrentUsername();
-      assertEquals("anonymousUser", username);
+      assertEquals("", username);
     }
   }
 
   @Test
-  @DisplayName("getCurrentUsername returns 'anonymousUser' when Authentication is null")
+  @DisplayName("getCurrentUsername returns empty string when Authentication is null")
   void getCurrentUsername_when_authenticationIsNull() {
     try (var mockedStatic = mockStatic(SecurityContextHolder.class)) {
       var securityContext = mock(SecurityContext.class);
@@ -55,7 +55,7 @@ class UserContextServiceTest {
       mockedStatic.when(SecurityContextHolder::getContext).thenReturn(securityContext);
 
       String username = userContextService.getCurrentUsername();
-      assertEquals("anonymousUser", username);
+      assertEquals("", username);
     }
   }
 }

@@ -13,7 +13,7 @@ public class UserContextService {
   @Nonnull
   public String getCurrentUsername() {
     Authentication authentication = getAuthentication();
-    return authentication == null ? "anonymousUser" : authentication.getName();
+    return authentication == null ? "" : authentication.getName();
   }
 
   @Nullable
