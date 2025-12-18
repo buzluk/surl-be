@@ -25,5 +25,5 @@ jwt:
   secret: ee99ed419ddd58872ace1fa9951508a85a95660054b1f1da5f2e36baf1a3e434a0d41550252c0134e651278ee57dfece042a6ea4c600ca0c00693cea30dbaf5c
 
 surl:
-  domain: http://localhost:8080/
+  base-url: http://localhost:8080/
   max-attempts: 5

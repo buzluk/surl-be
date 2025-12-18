@@ -15,8 +15,8 @@ public class SurlApplication {
 
   @Bean
   SurlConfig surlConfig(
-      @Value("${surl.domain:http://localhost:8080}") String domain,
-      @Value("${surl.max-attempts:5}") int maxShortCodeGenerationAttempts) {
-    return new SurlConfig(domain, maxShortCodeGenerationAttempts);
+      @Value("${surl.base-url}") String baseUrl,
+      @Value("${surl.max-attempts}") int maxShortCodeGenerationAttempts) {
+    return new SurlConfig(baseUrl, maxShortCodeGenerationAttempts);
   }
 }
