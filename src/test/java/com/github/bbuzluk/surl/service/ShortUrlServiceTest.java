@@ -11,6 +11,7 @@ import com.github.bbuzluk.surl.data.model.SurlConfig;
 import com.github.bbuzluk.surl.data.response.CreatedShortUrl;
 import com.github.bbuzluk.surl.exception.FailedUniqueShortCodeException;
 import com.github.bbuzluk.surl.repository.ShortUrlRepository;
+import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -25,7 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class ShortUrlServiceTest {
-  SurlConfig surlConfig = new SurlConfig("test.com/", 5);
+  SurlConfig surlConfig = new SurlConfig("test.com/", 5, Duration.ZERO);
   ShortUrlMapper shortUrlMapper = Mappers.getMapper(ShortUrlMapper.class);
   @Mock ShortUrlRepository shortUrlRepository;
   @Mock ShortCodeGenerator shortCodeGenerator;

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.authentication.UsernamePasswordAuthenticationToken.authenticated;
 
 import com.github.bbuzluk.surl.data.model.AuthToken;
+import com.github.bbuzluk.surl.data.model.SurlConfig;
 import com.github.bbuzluk.surl.service.AuthService;
 import com.github.bbuzluk.surl.service.AuthTokenService;
 import java.time.Duration;
@@ -28,8 +29,8 @@ class AuthServiceTest {
 
   @BeforeEach
   void setUp() {
-    this.authService =
-        new AuthService(Duration.ofSeconds(60), authTokenService, authenticationManager);
+    SurlConfig surlConfig = new SurlConfig("http://localhost:8080", 5, Duration.ofSeconds(60));
+    this.authService = new AuthService(surlConfig, authTokenService, authenticationManager);
   }
 
   @Test

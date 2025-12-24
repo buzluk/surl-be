@@ -1,6 +1,7 @@
 package com.github.bbuzluk.surl;
 
 import com.github.bbuzluk.surl.data.model.SurlConfig;
+import java.time.Duration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,7 +17,9 @@ public class SurlApplication {
   @Bean
   SurlConfig surlConfig(
       @Value("${surl.base-url}") String baseUrl,
-      @Value("${surl.max-attempts}") int maxShortCodeGenerationAttempts) {
-    return new SurlConfig(baseUrl, maxShortCodeGenerationAttempts);
+      @Value("${surl.max-attempts}") int maxShortCodeGenerationAttempts,
+      @Value("${surl.auth-token-duration}") int tokenDuration) {
+    return new SurlConfig(
+        baseUrl, maxShortCodeGenerationAttempts, Duration.ofSeconds(tokenDuration));
   }
 }

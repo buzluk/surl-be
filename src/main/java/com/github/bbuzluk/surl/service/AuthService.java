@@ -3,9 +3,9 @@ package com.github.bbuzluk.surl.service;
 import static org.springframework.security.authentication.UsernamePasswordAuthenticationToken.unauthenticated;
 
 import com.github.bbuzluk.surl.data.model.AuthToken;
+import com.github.bbuzluk.surl.data.model.SurlConfig;
 import java.time.Duration;
 import java.time.Instant;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
@@ -17,10 +17,10 @@ public class AuthService {
   private final AuthenticationManager authenticationManager;
 
   public AuthService(
-      @Qualifier("tokenDuration") Duration tokenDuration,
+      SurlConfig surlConfig,
       AuthTokenService authTokenService,
       AuthenticationManager authenticationManager) {
-    this.tokenDuration = tokenDuration;
+    this.tokenDuration = surlConfig.authTokenDuration();
     this.authTokenService = authTokenService;
     this.authenticationManager = authenticationManager;
   }
