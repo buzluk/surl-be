@@ -6,11 +6,12 @@ import com.github.bbuzluk.surl.data.model.SurlConfig;
 import com.github.bbuzluk.surl.data.response.CreatedShortUrl;
 import com.github.bbuzluk.surl.exception.FailedUniqueShortCodeException;
 import com.github.bbuzluk.surl.repository.ShortUrlRepository;
-import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +25,6 @@ public class ShortUrlService {
   public CreatedShortUrl createShortUrl(String originalUrl) {
     ShortUrl shortUrl = new ShortUrl();
     shortUrl.setOriginalUrl(originalUrl);
-    shortUrl.setCreatedAt(new Date());
     shortUrl.setUsername(userContextService.getCurrentUsername());
     shortUrl.setShortCode(generateShortCode());
     ShortUrl savedShortUrl = shortUrlRepository.save(shortUrl);
@@ -47,7 +47,19 @@ public class ShortUrlService {
         .toList();
   }
 
+  @PreAuthorize("isAuthenticated()")
   public void deleteShortUrl(Long id) {
+    ShortUrl shortUrl =
+        shortUrlRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ShortUrl not found"));
+
+    if (!shortUrl.getUsername().equals(userContextService.getCurrentUsername())) {
+      throw new ResponseStatusException(
+          HttpStatus.FORBIDDEN, "You are not authorized to delete this ShortUrl");
+    }
+
     shortUrlRepository.deleteById(id);
   }
 }

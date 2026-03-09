@@ -14,6 +14,7 @@ import com.github.bbuzluk.surl.repository.ShortUrlRepository;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,8 +24,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class ShortUrlServiceTest {
   SurlConfig surlConfig = new SurlConfig("test.com/", 5, Duration.ZERO);
   ShortUrlMapper shortUrlMapper = Mappers.getMapper(ShortUrlMapper.class);
@@ -103,6 +109,54 @@ class ShortUrlServiceTest {
       String expectedFullShortUrl = surlConfig.baseUrl() + expectedResult.getShortCode();
       assertEquals(expectedFullShortUrl, actualResult.getFullShortUrl());
     }
+  }
+
+  @Test
+  @DisplayName("deleteShortUrl should delete the short URL if the user is the owner")
+  void deleteShortUrl_when_userIsOwner() {
+    Long shortUrlId = 1L;
+    ShortUrl shortUrl = ShortUrl.from(USERNAME, "https://example.com", "code1");
+    shortUrl.setId(shortUrlId);
+
+    when(shortUrlRepository.findById(shortUrlId)).thenReturn(Optional.of(shortUrl));
+    doNothing().when(shortUrlRepository).deleteById(shortUrlId);
+
+    shortUrlService.deleteShortUrl(shortUrlId);
+
+    verify(shortUrlRepository, times(1)).deleteById(shortUrlId);
+  }
+
+  @Test
+  @DisplayName("deleteShortUrl should throw NOT_FOUND if short URL does not exist")
+  void deleteShortUrl_when_shortUrlDoesNotExist() {
+    Long shortUrlId = 1L;
+    when(shortUrlRepository.findById(shortUrlId)).thenReturn(Optional.empty());
+
+    ResponseStatusException exception =
+        assertThrows(
+            ResponseStatusException.class, () -> shortUrlService.deleteShortUrl(shortUrlId));
+
+    assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    assertEquals("ShortUrl not found", exception.getReason());
+    verify(shortUrlRepository, never()).deleteById(any());
+  }
+
+  @Test
+  @DisplayName("deleteShortUrl should throw FORBIDDEN if user is not the owner")
+  void deleteShortUrl_when_userIsNotOwner() {
+    Long shortUrlId = 1L;
+    ShortUrl shortUrl = ShortUrl.from("anotherUser", "https://example.com", "code1");
+    shortUrl.setId(shortUrlId);
+
+    when(shortUrlRepository.findById(shortUrlId)).thenReturn(Optional.of(shortUrl));
+
+    ResponseStatusException exception =
+        assertThrows(
+            ResponseStatusException.class, () -> shortUrlService.deleteShortUrl(shortUrlId));
+
+    assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
+    assertEquals("You are not authorized to delete this ShortUrl", exception.getReason());
+    verify(shortUrlRepository, never()).deleteById(any());
   }
 
   private static List<ShortUrl> createMockShortUrls() {
