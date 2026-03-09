@@ -1,19 +1,22 @@
 package com.github.bbuzluk.surl.controller;
 
+import com.github.bbuzluk.surl.data.model.VersionInfo;
 import java.time.LocalDate;
-import java.time.Month;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.ZoneId;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 public class SurlController {
+  private final BuildProperties buildProperties;
+
   @GetMapping("/version")
-  public Map<Object, Object> getVersion() {
-    Map<Object, Object> versionInfo = new HashMap<>();
-    versionInfo.put("version", "0.0.0");
-    versionInfo.put("buildDate", LocalDate.of(2025, Month.NOVEMBER, 2));
-    return versionInfo;
+  public VersionInfo getVersion() {
+    return new VersionInfo(
+        buildProperties.getVersion(),
+        LocalDate.ofInstant(buildProperties.getTime(), ZoneId.systemDefault()));
   }
 }
