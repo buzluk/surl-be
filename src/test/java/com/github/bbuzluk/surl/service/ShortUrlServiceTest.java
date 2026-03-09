@@ -57,6 +57,7 @@ class ShortUrlServiceTest {
             invocation -> {
               ShortUrl arg = invocation.getArgument(0);
               arg.setId(1L);
+              arg.setCreatedAt(new Date());
               return arg;
             });
 

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Getter
@@ -13,7 +14,7 @@ public class ShortUrl {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private Date createdAt;
+  @CreationTimestamp private Date createdAt;
 
   @Column(nullable = false)
   private String username;
@@ -29,7 +30,6 @@ public class ShortUrl {
     shortUrl.setUsername(username);
     shortUrl.setOriginalUrl(originalUrl);
     shortUrl.setShortCode(shortCode);
-    shortUrl.setCreatedAt(new Date());
     return shortUrl;
   }
 }
