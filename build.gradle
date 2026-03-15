@@ -5,7 +5,7 @@ plugins {
     id "com.diffplug.spotless" version "6.21.0"
 }
 
-group = 'com.github.bbuzluk'
+group = 'com.github.buzluk'
 version = '0.0.1-SNAPSHOT'
 description = 'Short Url Backend Project'
 
