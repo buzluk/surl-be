@@ -5,10 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.authentication.UsernamePasswordAuthenticationToken.authenticated;
 
-import com.github.buzluk.surl.data.model.AuthToken;
-import com.github.buzluk.surl.data.model.SurlConfig;
-import com.github.buzluk.surl.service.AuthService;
-import com.github.buzluk.surl.service.AuthTokenService;
+import com.github.buzluk.surl.auth.data.dto.AuthToken;
+import com.github.buzluk.surl.system.data.SurlProperties;
 import java.time.Duration;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,8 +27,9 @@ class AuthServiceTest {
 
   @BeforeEach
   void setUp() {
-    SurlConfig surlConfig = new SurlConfig("http://localhost:8080", 5, Duration.ofSeconds(60));
-    this.authService = new AuthService(surlConfig, authTokenService, authenticationManager);
+    SurlProperties surlProperties =
+        new SurlProperties("http://localhost:8080", 5, Duration.ofSeconds(60));
+    this.authService = new AuthService(surlProperties, authTokenService, authenticationManager);
   }
 
   @Test
