@@ -1,8 +1,9 @@
 package com.github.buzluk.surl.shorturl;
 
 import com.github.buzluk.surl.shorturl.data.dto.CreatedShortUrl;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,12 +15,13 @@ public class ShortUrlController {
 
   @PostMapping
   public CreatedShortUrl createShortUrl(@RequestParam("url") String originalUrl) {
+
     return shortUrlService.createShortUrl(originalUrl);
   }
 
   @GetMapping
-  public List<CreatedShortUrl> getAllShortUrls() {
-    return shortUrlService.getAllShortUrls();
+  public Page<CreatedShortUrl> getAllShortUrls(Pageable pageable) {
+    return shortUrlService.getAllShortUrls(pageable);
   }
 
   @DeleteMapping("/{id}")

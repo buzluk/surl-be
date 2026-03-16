@@ -7,9 +7,10 @@ import com.github.buzluk.surl.shorturl.exception.FailedUniqueShortCodeException;
 import com.github.buzluk.surl.shorturl.generator.ShortCodeGenerator;
 import com.github.buzluk.surl.system.data.SurlProperties;
 import com.github.buzluk.surl.user.service.UserContextService;
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -40,11 +41,10 @@ public class ShortUrlService {
   }
 
   @PreAuthorize("isAuthenticated()")
-  public List<CreatedShortUrl> getAllShortUrls() {
-    final String currentUsername = userContextService.getCurrentUsername();
-    return shortUrlRepository.findAllByUsername(currentUsername).stream()
-        .map(shortUrlMapper::toCreatedShortUrl)
-        .toList();
+  public Page<CreatedShortUrl> getAllShortUrls(Pageable pageable) {
+    final String username = userContextService.getCurrentUsername();
+    Page<ShortUrl> shortUrls = shortUrlRepository.findAllByUsername(username, pageable);
+    return shortUrls.map(shortUrlMapper::toCreatedShortUrl);
   }
 
   @PreAuthorize("isAuthenticated()")

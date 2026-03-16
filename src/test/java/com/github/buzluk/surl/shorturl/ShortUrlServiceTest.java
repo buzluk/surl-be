@@ -27,6 +27,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -90,15 +92,19 @@ class ShortUrlServiceTest {
   }
 
   @Test
-  @DisplayName("getAllShortUrls should return a list of short urls for the current user")
+  @DisplayName("getAllShortUrls should return a page of short urls for the current user")
   void getAllShortUrls() {
     List<ShortUrl> expectedShortUrls = createMockShortUrls();
-    when(shortUrlRepository.findAllByUsername(USERNAME)).thenReturn(expectedShortUrls);
+    Page<ShortUrl> expectedPage =
+        new PageImpl<>(expectedShortUrls, PAGEABLE, expectedShortUrls.size());
+    when(shortUrlRepository.findAllByUsername(USERNAME, PAGEABLE)).thenReturn(expectedPage);
 
-    List<CreatedShortUrl> actualShortUrls = shortUrlService.getAllShortUrls();
+    Page<CreatedShortUrl> actualPage = shortUrlService.getAllShortUrls(PAGEABLE);
 
     assertEquals(USERNAME, userContextService.getCurrentUsername());
+    assertEquals(expectedShortUrls.size(), actualPage.getContent().size());
 
+    List<CreatedShortUrl> actualShortUrls = actualPage.getContent();
     for (int i = 0; i < expectedShortUrls.size(); i++) {
       var expectedResult = expectedShortUrls.get(i);
       var actualResult = actualShortUrls.get(i);

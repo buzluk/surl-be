@@ -3,6 +3,8 @@ package com.github.buzluk.surl.util;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class TestUtil {
 
   public static final String USERNAME = "tester";
+  public static final Pageable PAGEABLE = PageRequest.of(0, 25);
 
   public static void mockSecurityContextHolder() {
     Authentication auth = mock(Authentication.class);
