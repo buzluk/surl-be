@@ -10,6 +10,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserContextService {
 
+  public boolean isActiveUser(@Nullable String username) {
+    if (username == null || username.isBlank()) return false;
+    return getCurrentUsername().equals(username);
+  }
+
   @Nonnull
   public String getCurrentUsername() {
     Authentication authentication = getAuthentication();

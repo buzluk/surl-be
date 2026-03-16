@@ -1,5 +1,6 @@
 package com.github.buzluk.surl.shorturl;
 
+import com.github.buzluk.surl.core.exception.ServiceException;
 import com.github.buzluk.surl.shorturl.data.dto.CreatedShortUrl;
 import com.github.buzluk.surl.shorturl.data.entity.ShortUrl;
 import com.github.buzluk.surl.shorturl.exception.FailedUniqueShortCodeException;
@@ -7,11 +8,10 @@ import com.github.buzluk.surl.shorturl.generator.ShortCodeGenerator;
 import com.github.buzluk.surl.system.data.SurlProperties;
 import com.github.buzluk.surl.user.service.UserContextService;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -49,17 +49,13 @@ public class ShortUrlService {
 
   @PreAuthorize("isAuthenticated()")
   public void deleteShortUrl(Long id) {
-    ShortUrl shortUrl =
-        shortUrlRepository
-            .findById(id)
-            .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ShortUrl not found"));
-
-    if (!shortUrl.getUsername().equals(userContextService.getCurrentUsername())) {
-      throw new ResponseStatusException(
-          HttpStatus.FORBIDDEN, "You are not authorized to delete this ShortUrl");
+    Optional<ShortUrl> shortUrl = shortUrlRepository.findById(id);
+    if (shortUrl.isEmpty()) {
+      throw new ServiceException("ShortUrl Id:" + id + " not found.");
     }
-
+    if (!userContextService.isActiveUser(shortUrl.get().getUsername())) {
+      throw new ServiceException("ShortUrl Id:" + id + " does not belong to the current user.");
+    }
     shortUrlRepository.deleteById(id);
   }
 }
