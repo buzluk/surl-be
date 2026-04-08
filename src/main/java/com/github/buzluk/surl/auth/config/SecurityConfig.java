@@ -38,7 +38,7 @@ public class SecurityConfig {
         authorizeHttpRequests -> {
           authorizeHttpRequests.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
           authorizeHttpRequests.requestMatchers("api/auth/**").permitAll();
-          authorizeHttpRequests.requestMatchers(HttpMethod.POST, "api/users").permitAll();
+          authorizeHttpRequests.requestMatchers("/api/users", "/api/users/**").permitAll();
           authorizeHttpRequests.requestMatchers(HttpMethod.GET, "/version").permitAll();
           authorizeHttpRequests.anyRequest().authenticated();
         });

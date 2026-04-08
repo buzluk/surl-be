@@ -1,5 +1,8 @@
 package com.github.buzluk.surl.user.service;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import com.github.buzluk.surl.core.exception.ServiceException;
 import com.github.buzluk.surl.user.UserRepository;
 import com.github.buzluk.surl.user.data.dto.CreateUserRequest;
 import com.github.buzluk.surl.user.data.entity.User;
@@ -28,5 +31,15 @@ public class UserService implements UserDetailsService {
     String encodedPassword = passwordEncoder.encode(request.password());
     User newUser = User.from(request.username(), encodedPassword, request.email());
     userRepository.save(newUser);
+  }
+
+  public boolean existsByUsernameOrEmail(String username, String email) {
+    if (isNotBlank(username)) {
+      return userRepository.existsByUsername(username);
+    }
+    if (isNotBlank(email)) {
+      return userRepository.existsByEmail(email);
+    }
+    throw new ServiceException("Username or email must be provided");
   }
 }
