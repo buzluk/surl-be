@@ -25,6 +25,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -158,6 +159,59 @@ class ShortUrlServiceTest {
 
     assertThrows(ServiceException.class, () -> shortUrlService.deleteShortUrl(shortUrlId));
     verify(shortUrlRepository, never()).deleteById(any());
+  }
+
+  @Test
+  @DisplayName("getOriginalUrl should return original URL when short code exists")
+  void getOriginalUrl_when_shortCodeExists() {
+    String shortCode = "abc123";
+    String originalUrl = "https://example.com";
+    ShortUrl shortUrl = ShortUrl.from(USERNAME, originalUrl, shortCode);
+
+    when(shortUrlRepository.findByShortCode(shortCode)).thenReturn(Optional.of(shortUrl));
+
+    String result = shortUrlService.getOriginalUrl(shortCode);
+
+    assertEquals(originalUrl, result);
+  }
+
+  @Test
+  @DisplayName("getOriginalUrl should throw ServiceException when short code does not exist")
+  void getOriginalUrl_when_shortCodeDoesNotExist() {
+    String shortCode = "nonexistent";
+
+    when(shortUrlRepository.findByShortCode(shortCode)).thenReturn(Optional.empty());
+
+    assertThrows(ServiceException.class, () -> shortUrlService.getOriginalUrl(shortCode));
+  }
+
+  @Test
+  @DisplayName("getAllShortUrls should adjust pageable when sorting by fullShortUrl")
+  void getAllShortUrls_with_fullShortUrlSort() {
+    org.springframework.data.domain.Pageable pageable =
+        org.springframework.data.domain.PageRequest.of(
+            0, 10, org.springframework.data.domain.Sort.by("fullShortUrl").descending());
+
+    List<ShortUrl> expectedShortUrls = createMockShortUrls();
+    Page<ShortUrl> expectedPage =
+        new PageImpl<>(expectedShortUrls, pageable, expectedShortUrls.size());
+
+    // Captured adjusted pageable
+    ArgumentCaptor<org.springframework.data.domain.Pageable> captor =
+        ArgumentCaptor.forClass(org.springframework.data.domain.Pageable.class);
+
+    when(shortUrlRepository.findAllByUsername(eq(USERNAME), captor.capture()))
+        .thenReturn(expectedPage);
+
+    shortUrlService.getAllShortUrls(pageable);
+
+    org.springframework.data.domain.Pageable adjusted = captor.getValue();
+    assertNotNull(adjusted.getSort().getOrderFor("originalUrl"));
+    assertNotNull(adjusted.getSort().getOrderFor("shortCode"));
+    assertNull(adjusted.getSort().getOrderFor("fullShortUrl"));
+    assertEquals(
+        org.springframework.data.domain.Sort.Direction.DESC,
+        adjusted.getSort().getOrderFor("originalUrl").getDirection());
   }
 
   private static List<ShortUrl> createMockShortUrls() {

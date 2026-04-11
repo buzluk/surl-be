@@ -57,4 +57,40 @@ class UserContextServiceTest {
       assertEquals("", username);
     }
   }
+
+  @Test
+  @DisplayName("isActiveUser returns true when username matches the current user")
+  void isActiveUser_when_usernameMatches() {
+    try (var mockedStatic = mockStatic(SecurityContextHolder.class)) {
+      var authentication = mock(Authentication.class);
+      when(authentication.getName()).thenReturn("testUser");
+      var securityContext = mock(SecurityContext.class);
+      when(securityContext.getAuthentication()).thenReturn(authentication);
+      mockedStatic.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+
+      assertTrue(userContextService.isActiveUser("testUser"));
+    }
+  }
+
+  @Test
+  @DisplayName("isActiveUser returns false when username is null or blank")
+  void isActiveUser_when_usernameIsNullOrBlank() {
+    assertFalse(userContextService.isActiveUser(null));
+    assertFalse(userContextService.isActiveUser(""));
+    assertFalse(userContextService.isActiveUser("   "));
+  }
+
+  @Test
+  @DisplayName("isActiveUser returns false when username does not match")
+  void isActiveUser_when_usernameDoesNotMatch() {
+    try (var mockedStatic = mockStatic(SecurityContextHolder.class)) {
+      var authentication = mock(Authentication.class);
+      when(authentication.getName()).thenReturn("testUser");
+      var securityContext = mock(SecurityContext.class);
+      when(securityContext.getAuthentication()).thenReturn(authentication);
+      mockedStatic.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+
+      assertFalse(userContextService.isActiveUser("otherUser"));
+    }
+  }
 }

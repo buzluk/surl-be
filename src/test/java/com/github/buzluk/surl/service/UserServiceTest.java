@@ -62,4 +62,27 @@ class UserServiceTest {
     assertEquals("encoded-pass", savedUser.getPassword());
     assertEquals("newmail@mail.com", savedUser.getEmail());
   }
+
+  @Test
+  @DisplayName("existsByUsernameOrEmail should return true when username exists")
+  void existsByUsernameOrEmail_when_usernameExists() {
+    when(userRepository.existsByUsername("existingUser")).thenReturn(true);
+    assertTrue(userService.existsByUsernameOrEmail("existingUser", null));
+  }
+
+  @Test
+  @DisplayName("existsByUsernameOrEmail should return true when email exists")
+  void existsByUsernameOrEmail_when_emailExists() {
+    when(userRepository.existsByEmail("existing@mail.com")).thenReturn(true);
+    assertTrue(userService.existsByUsernameOrEmail(null, "existing@mail.com"));
+  }
+
+  @Test
+  @DisplayName(
+      "existsByUsernameOrEmail should throw ServiceException when both arguments are blank")
+  void existsByUsernameOrEmail_when_bothArgumentsBlank() {
+    assertThrows(
+        com.github.buzluk.surl.data.exception.ServiceException.class,
+        () -> userService.existsByUsernameOrEmail(null, " "));
+  }
 }
