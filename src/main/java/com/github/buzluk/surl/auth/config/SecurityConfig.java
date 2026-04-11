@@ -40,7 +40,11 @@ public class SecurityConfig {
           authorizeHttpRequests.requestMatchers("/api/auth/**").permitAll();
           authorizeHttpRequests.requestMatchers("/api/users", "/api/users/**").permitAll();
           authorizeHttpRequests.requestMatchers(HttpMethod.GET, "/version").permitAll();
-          authorizeHttpRequests.anyRequest().authenticated();
+          authorizeHttpRequests
+              .requestMatchers(HttpMethod.GET, "/{shortCode:[a-zA-Z0-9]{6}}")
+              .permitAll();
+          authorizeHttpRequests.requestMatchers("/api/**").authenticated();
+          authorizeHttpRequests.anyRequest().denyAll();
         });
 
     http.addFilterBefore(
