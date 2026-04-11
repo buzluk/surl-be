@@ -1,5 +1,6 @@
 package com.github.buzluk.surl.shorturl;
 
+import com.github.buzluk.surl.core.dto.MinimalPage;
 import com.github.buzluk.surl.core.exception.ServiceException;
 import com.github.buzluk.surl.shorturl.data.dto.CreatedShortUrl;
 import com.github.buzluk.surl.shorturl.data.entity.ShortUrl;
@@ -7,10 +8,14 @@ import com.github.buzluk.surl.shorturl.exception.FailedUniqueShortCodeException;
 import com.github.buzluk.surl.shorturl.generator.ShortCodeGenerator;
 import com.github.buzluk.surl.system.data.SurlProperties;
 import com.github.buzluk.surl.user.service.UserContextService;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -41,10 +46,21 @@ public class ShortUrlService {
   }
 
   @PreAuthorize("isAuthenticated()")
-  public Page<CreatedShortUrl> getAllShortUrls(Pageable pageable) {
+  public MinimalPage<CreatedShortUrl> getAllShortUrls(Pageable pageable) {
+    Pageable adjustedPageable = adjustPageable(pageable);
     final String username = userContextService.getCurrentUsername();
-    Page<ShortUrl> shortUrls = shortUrlRepository.findAllByUsername(username, pageable);
-    return shortUrls.map(shortUrlMapper::toCreatedShortUrl);
+    Page<ShortUrl> shortUrls = shortUrlRepository.findAllByUsername(username, adjustedPageable);
+    return MinimalPage.of(shortUrls.map(shortUrlMapper::toCreatedShortUrl));
+  }
+
+  private Pageable adjustPageable(Pageable pageable) {
+    Order fullShortUrlOrder = pageable.getSort().getOrderFor("fullShortUrl");
+    if (fullShortUrlOrder == null) {
+      return pageable;
+    }
+    Sort.Direction direction = fullShortUrlOrder.getDirection();
+    var newOrders = List.of(new Order(direction, "originalUrl"), new Order(direction, "shortCode"));
+    return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(newOrders));
   }
 
   @PreAuthorize("isAuthenticated()")

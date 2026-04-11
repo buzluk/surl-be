@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import com.github.buzluk.surl.core.dto.MinimalPage;
 import com.github.buzluk.surl.core.exception.ServiceException;
 import com.github.buzluk.surl.shorturl.data.dto.CreatedShortUrl;
 import com.github.buzluk.surl.shorturl.data.entity.ShortUrl;
@@ -99,7 +100,7 @@ class ShortUrlServiceTest {
         new PageImpl<>(expectedShortUrls, PAGEABLE, expectedShortUrls.size());
     when(shortUrlRepository.findAllByUsername(USERNAME, PAGEABLE)).thenReturn(expectedPage);
 
-    Page<CreatedShortUrl> actualPage = shortUrlService.getAllShortUrls(PAGEABLE);
+    MinimalPage<CreatedShortUrl> actualPage = shortUrlService.getAllShortUrls(PAGEABLE);
 
     assertEquals(USERNAME, userContextService.getCurrentUsername());
     assertEquals(expectedShortUrls.size(), actualPage.getContent().size());

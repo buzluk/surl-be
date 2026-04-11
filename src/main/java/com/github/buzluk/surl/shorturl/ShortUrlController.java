@@ -1,8 +1,10 @@
 package com.github.buzluk.surl.shorturl;
 
+import static org.springframework.data.domain.Sort.*;
+
+import com.github.buzluk.surl.core.dto.MinimalPage;
 import com.github.buzluk.surl.shorturl.data.dto.CreatedShortUrl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +22,7 @@ public class ShortUrlController {
   }
 
   @GetMapping
-  public Page<CreatedShortUrl> getAllShortUrls(Pageable pageable) {
+  public MinimalPage<CreatedShortUrl> getAllShortUrls(Pageable pageable) {
     return shortUrlService.getAllShortUrls(pageable);
   }
 
