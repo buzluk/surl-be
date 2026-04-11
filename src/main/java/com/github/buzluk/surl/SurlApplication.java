@@ -1,6 +1,6 @@
 package com.github.buzluk.surl;
 
-import com.github.buzluk.surl.system.data.SurlProperties;
+import com.github.buzluk.surl.data.dto.SurlProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
