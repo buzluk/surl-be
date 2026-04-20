@@ -29,6 +29,7 @@ public class ShortUrlService {
   private final ShortCodeGenerator shortCodeGenerator;
   private final UserContextService userContextService;
 
+  @PreAuthorize("isAuthenticated()")
   public CreatedShortUrl createShortUrl(String originalUrl) {
     ShortUrl shortUrl = new ShortUrl();
     shortUrl.setOriginalUrl(originalUrl);
