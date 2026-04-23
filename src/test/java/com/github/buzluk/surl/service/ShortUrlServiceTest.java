@@ -127,7 +127,10 @@ class ShortUrlServiceTest {
   @DisplayName("deleteShortUrl should delete the short URL if the user is the owner")
   void deleteShortUrl_when_userIsOwner() {
     Long shortUrlId = 1L;
-    ShortUrl shortUrl = ShortUrl.from(USERNAME, "https://example.com", "code1");
+    ShortUrl shortUrl = new ShortUrl();
+    shortUrl.setUsername(USERNAME);
+    shortUrl.setOriginalUrl("https://example.com");
+    shortUrl.setShortCode("code1");
     shortUrl.setId(shortUrlId);
 
     when(shortUrlRepository.findById(shortUrlId)).thenReturn(Optional.of(shortUrl));
@@ -152,7 +155,10 @@ class ShortUrlServiceTest {
   @DisplayName("deleteShortUrl should throw ServiceException if user is not the owner")
   void deleteShortUrl_when_userIsNotOwner() {
     Long shortUrlId = 1L;
-    ShortUrl shortUrl = ShortUrl.from("anotherUser", "https://example.com", "code1");
+    ShortUrl shortUrl = new ShortUrl();
+    shortUrl.setUsername("anotherUser");
+    shortUrl.setOriginalUrl("https://example.com");
+    shortUrl.setShortCode("code1");
     shortUrl.setId(shortUrlId);
 
     when(shortUrlRepository.findById(shortUrlId)).thenReturn(Optional.of(shortUrl));
@@ -166,7 +172,10 @@ class ShortUrlServiceTest {
   void getOriginalUrl_when_shortCodeExists() {
     String shortCode = "abc123";
     String originalUrl = "https://example.com";
-    ShortUrl shortUrl = ShortUrl.from(USERNAME, originalUrl, shortCode);
+    ShortUrl shortUrl = new ShortUrl();
+    shortUrl.setUsername(USERNAME);
+    shortUrl.setOriginalUrl(originalUrl);
+    shortUrl.setShortCode(shortCode);
 
     when(shortUrlRepository.findByShortCode(shortCode)).thenReturn(Optional.of(shortUrl));
 
@@ -215,10 +224,16 @@ class ShortUrlServiceTest {
   }
 
   private static List<ShortUrl> createMockShortUrls() {
-    ShortUrl code1 = ShortUrl.from(USERNAME, "https://example.com", "code1");
+    ShortUrl code1 = new ShortUrl();
+    code1.setUsername(USERNAME);
+    code1.setOriginalUrl("https://example.com");
+    code1.setShortCode("code1");
     code1.setCreatedAt(new Date(100000L));
     code1.setId(1L);
-    ShortUrl code2 = ShortUrl.from(USERNAME, "https://example.org", "code2");
+    ShortUrl code2 = new ShortUrl();
+    code2.setUsername(USERNAME);
+    code2.setOriginalUrl("https://example.org");
+    code2.setShortCode("code2");
     code2.setCreatedAt(new Date(200000L));
     code2.setId(2L);
     return List.of(code1, code2);

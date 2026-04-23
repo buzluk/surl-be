@@ -29,7 +29,10 @@ public class UserService implements UserDetailsService {
 
   public void createUser(CreateUserRequest request) {
     String encodedPassword = passwordEncoder.encode(request.password());
-    User newUser = User.from(request.username(), encodedPassword, request.email());
+    User newUser = new User();
+    newUser.setUsername(request.username());
+    newUser.setPassword(encodedPassword);
+    newUser.setEmail(request.email());
     userRepository.save(newUser);
   }
 

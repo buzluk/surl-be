@@ -27,8 +27,11 @@ class UserServiceTest {
   @Test
   @DisplayName("loadUserByUsername should return UserDetails when user is found")
   void loadUserByUsername_when_userFound() {
-    when(userRepository.findByUsername("testuser"))
-        .thenReturn(User.from("testuser", "password", "user@mail.com"));
+    User userFromRepo = new User();
+    userFromRepo.setUsername("testuser");
+    userFromRepo.setPassword("password");
+    userFromRepo.setEmail("user@mail.com");
+    when(userRepository.findByUsername("testuser")).thenReturn(userFromRepo);
     UserDetails user = userService.loadUserByUsername("testuser");
     assertNotNull(user);
     assertEquals("testuser", user.getUsername());

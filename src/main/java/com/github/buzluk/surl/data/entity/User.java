@@ -1,7 +1,5 @@
 package com.github.buzluk.surl.data.entity;
 
-import static java.util.Objects.requireNonNull;
-
 import com.github.buzluk.surl.data.enums.UserStatus;
 import jakarta.persistence.*;
 import java.util.Collection;
@@ -19,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
       @Index(name = "idx_username", columnList = "username", unique = true),
       @Index(name = "idx_email", columnList = "email", unique = true)
     })
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements UserDetails {
 
   @Id
@@ -38,14 +35,6 @@ public class User implements UserDetails {
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private UserStatus status = UserStatus.ACTIVE;
-
-  public static User from(String username, String password, String email) {
-    User user = new User();
-    user.setUsername(requireNonNull(username));
-    user.setPassword(requireNonNull(password));
-    user.setEmail(requireNonNull(email));
-    return user;
-  }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
