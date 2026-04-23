@@ -77,10 +77,13 @@ public class ShortUrlService {
     shortUrlRepository.deleteById(id);
   }
 
-  public String getOriginalUrl(String shortCode) {
+  public ShortUrl getShortUrlEntity(String shortCode) {
     return shortUrlRepository
         .findByShortCode(shortCode)
-        .orElseThrow(() -> new ServiceException("Short URL not found: " + shortCode))
-        .getOriginalUrl();
+        .orElseThrow(() -> new ServiceException("Short URL not found: " + shortCode));
+  }
+
+  public String getOriginalUrl(String shortCode) {
+    return getShortUrlEntity(shortCode).getOriginalUrl();
   }
 }

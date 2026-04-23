@@ -168,6 +168,33 @@ class ShortUrlServiceTest {
   }
 
   @Test
+  @DisplayName("getShortUrlEntity should return ShortUrl when short code exists")
+  void getShortUrlEntity_when_shortCodeExists() {
+    String shortCode = "abc123";
+    String originalUrl = "https://example.com";
+    ShortUrl shortUrl = new ShortUrl();
+    shortUrl.setUsername(USERNAME);
+    shortUrl.setOriginalUrl(originalUrl);
+    shortUrl.setShortCode(shortCode);
+
+    when(shortUrlRepository.findByShortCode(shortCode)).thenReturn(Optional.of(shortUrl));
+
+    ShortUrl result = shortUrlService.getShortUrlEntity(shortCode);
+
+    assertEquals(shortUrl, result);
+  }
+
+  @Test
+  @DisplayName("getShortUrlEntity should throw ServiceException when short code does not exist")
+  void getShortUrlEntity_when_shortCodeDoesNotExist() {
+    String shortCode = "nonexistent";
+
+    when(shortUrlRepository.findByShortCode(shortCode)).thenReturn(Optional.empty());
+
+    assertThrows(ServiceException.class, () -> shortUrlService.getShortUrlEntity(shortCode));
+  }
+
+  @Test
   @DisplayName("getOriginalUrl should return original URL when short code exists")
   void getOriginalUrl_when_shortCodeExists() {
     String shortCode = "abc123";
